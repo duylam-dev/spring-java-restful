@@ -1,6 +1,7 @@
 package vn.hoidanit.jobhunter.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.List;
+
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import vn.hoidanit.jobhunter.domain.User;
 import vn.hoidanit.jobhunter.service.UserService;
+import org.springframework.web.bind.annotation.PutMapping;
 
 @RestController
 public class UserController {
@@ -31,5 +33,20 @@ public class UserController {
         userService.handleDelete(id);
         return "user delete";
 
+    }
+
+    @GetMapping("/user/{id}")
+    public User findUserById(@PathVariable("id") long id) {
+        return userService.handleFindUserById(id);
+    }
+
+    @GetMapping("/user")
+    public List<User> findAllUser() {
+        return userService.handleFindAllUser();
+    }
+
+    @PutMapping("/user")
+    public User updateUser(@RequestBody User user) {
+        return userService.handleUpdate(user);
     }
 }
