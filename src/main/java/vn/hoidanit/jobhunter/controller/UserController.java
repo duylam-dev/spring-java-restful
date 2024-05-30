@@ -2,6 +2,8 @@ package vn.hoidanit.jobhunter.controller;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,32 +23,31 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PostMapping("/user")
-    public User createNewUser(@RequestBody User postManUser) {
+    @PostMapping("/users")
+    public ResponseEntity<User> createNewUser(@RequestBody User postManUser) {
 
-        return userService.handleCreate(postManUser);
+        return ResponseEntity.status(HttpStatus.CREATED).body(userService.handleCreate(postManUser));
 
     }
 
-    @DeleteMapping("/user/{id}")
-    public String deleteUser(@PathVariable("id") long id) {
+    @DeleteMapping("/users/{id}")
+    public ResponseEntity<String> deleteUser(@PathVariable("id") long id) {
         userService.handleDelete(id);
-        return "user delete";
-
+        return ResponseEntity.ok("deleted");
     }
 
-    @GetMapping("/user/{id}")
-    public User findUserById(@PathVariable("id") long id) {
-        return userService.handleFindUserById(id);
+    @GetMapping("/users/{id}")
+    public ResponseEntity<User> findUserById(@PathVariable("id") long id) {
+        return ResponseEntity.ok(userService.handleFindUserById(id));
     }
 
-    @GetMapping("/user")
-    public List<User> findAllUser() {
-        return userService.handleFindAllUser();
+    @GetMapping("/users")
+    public ResponseEntity<List<User>> findAllUser() {
+        return ResponseEntity.ok(userService.handleFindAllUser());
     }
 
-    @PutMapping("/user")
-    public User updateUser(@RequestBody User user) {
-        return userService.handleUpdate(user);
+    @PutMapping("/users")
+    public ResponseEntity<User> updateUser(@RequestBody User user) {
+        return ResponseEntity.ok(user);
     }
 }
