@@ -28,7 +28,7 @@ public class FormatRestResponse implements ResponseBodyAdvice<Object> {
         HttpServletResponse servletResponse = ((ServletServerHttpResponse) response).getServletResponse();
         int status = servletResponse.getStatus();
 
-        RestResponse<Object> rs = new RestResponse<>();
+        var rs = new RestResponse<>();
         rs.setStatusCode(status);
 
         if (status >= 400) {
@@ -37,7 +37,6 @@ public class FormatRestResponse implements ResponseBodyAdvice<Object> {
             rs.setMessage("Call api success");
             rs.setData(body);
         }
-        // case success
 
         return rs;
     }
