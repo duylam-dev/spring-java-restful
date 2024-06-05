@@ -54,6 +54,6 @@ public class UserController {
 
     @PutMapping("/users")
     public ResponseEntity<User> updateUser(@RequestBody User user) {
-        return ResponseEntity.ok(user);
+        return ResponseEntity.ok(userService.handleUpdate(user));
     }
 }
