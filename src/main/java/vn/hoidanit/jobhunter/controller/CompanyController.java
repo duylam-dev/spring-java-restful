@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
-public class CompanyController {
+public class CompanyController extends BaseController {
     private CompanyService companyService;
 
     public CompanyController(CompanyService companyService) {

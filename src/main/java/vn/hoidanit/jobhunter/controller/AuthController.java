@@ -15,7 +15,7 @@ import vn.hoidanit.jobhunter.domain.dto.ResLoginDTO;
 import vn.hoidanit.jobhunter.util.SecurityUtil;
 
 @RestController
-public class AuthController {
+public class AuthController extends BaseController {
 
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final SecurityUtil securityUtil;

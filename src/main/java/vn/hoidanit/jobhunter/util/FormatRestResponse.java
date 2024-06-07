@@ -6,13 +6,14 @@ import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.http.server.ServletServerHttpResponse;
 import org.springframework.lang.Nullable;
-import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
 import jakarta.servlet.http.HttpServletResponse;
 import vn.hoidanit.jobhunter.domain.RestResponse;
+import vn.hoidanit.jobhunter.util.error.anotation.ApiMessage;
 
-@ControllerAdvice
+@RestController
 public class FormatRestResponse implements ResponseBodyAdvice<Object> {
 
     @Override
@@ -33,8 +34,9 @@ public class FormatRestResponse implements ResponseBodyAdvice<Object> {
         if (status >= 400 || body instanceof String) {
             return body;
         } else {
-            rs.setMessage("Call api success");
             rs.setData(body);
+            ApiMessage message = returnType.getMethodAnnotation(ApiMessage.class);
+            rs.setMessage(message == null ? "Call api success" : message.value());
 
         }
 
