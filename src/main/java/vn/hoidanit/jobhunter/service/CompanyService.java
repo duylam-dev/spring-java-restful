@@ -2,9 +2,14 @@ package vn.hoidanit.jobhunter.service;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import vn.hoidanit.jobhunter.domain.Company;
+import vn.hoidanit.jobhunter.domain.dto.Meta;
+import vn.hoidanit.jobhunter.domain.dto.ResPaginationDTO;
 import vn.hoidanit.jobhunter.repository.CompanyRepository;
 
 @Service
@@ -19,8 +24,19 @@ public class CompanyService {
         return companyRepository.save(company);
     }
 
-    public List<Company> handleFindAll() {
-        return companyRepository.findAll();
+    public ResPaginationDTO handleFindAll(Specification<Company> spec, Pageable pageable) {
+        Page<Company> companyPage = companyRepository.findAll(spec, pageable);
+        var mt = new Meta();
+        var rp = new ResPaginationDTO();
+
+        mt.setPage(pageable.getPageNumber() + 1);
+        mt.setPageSize(pageable.getPageSize());
+        mt.setPages(companyPage.getTotalPages());
+        mt.setTotal(companyPage.getTotalElements());
+
+        rp.setMeta(mt);
+        rp.setResult(companyPage.getContent());
+        return rp;
     }
 
     public Company handleUpdate(Company reCompany) {
