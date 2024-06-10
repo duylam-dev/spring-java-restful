@@ -12,15 +12,17 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
-import vn.hoidanit.jobhunter.domain.RestResponse;
+import vn.hoidanit.jobhunter.domain.dto.RestResponse;
 
 @RestControllerAdvice
 public class GlobalException {
 
     @ExceptionHandler(value = {
             UsernameNotFoundException.class,
-            BadCredentialsException.class
+            BadCredentialsException.class,
+            IdInvalidException.class
     })
     public ResponseEntity<RestResponse<Object>> handleIdInvalidException(Exception ex) {
 
@@ -29,6 +31,17 @@ public class GlobalException {
         rs.setError(ex.getMessage());
         rs.setMessage("Call api error");
 
+        return ResponseEntity.badRequest().body(rs);
+    }
+
+    @ExceptionHandler(value = {
+            NoResourceFoundException.class
+    })
+    public ResponseEntity<RestResponse<Object>> handleNoResourceFoundException(NoResourceFoundException m) {
+        var rs = new RestResponse<>();
+        rs.setStatusCode(m.getStatusCode().value());
+        rs.setMessage("404 not found. URL may not exist...");
+        rs.setError(m.getMessage());
         return ResponseEntity.badRequest().body(rs);
     }
 

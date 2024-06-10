@@ -10,8 +10,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
+import vn.hoidanit.jobhunter.domain.User;
 import vn.hoidanit.jobhunter.domain.dto.LoginDTO;
 import vn.hoidanit.jobhunter.domain.dto.ResLoginDTO;
+import vn.hoidanit.jobhunter.service.UserService;
 import vn.hoidanit.jobhunter.util.SecurityUtil;
 
 @RestController
@@ -19,10 +21,13 @@ public class AuthController extends BaseController {
 
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final SecurityUtil securityUtil;
+    private final UserService userService;
 
-    public AuthController(SecurityUtil securityUtil, AuthenticationManagerBuilder authenticationManagerBuilder) {
+    public AuthController(SecurityUtil securityUtil, AuthenticationManagerBuilder authenticationManagerBuilder,
+            UserService userService) {
         this.authenticationManagerBuilder = authenticationManagerBuilder;
         this.securityUtil = securityUtil;
+        this.userService = userService;
     }
 
     @PostMapping("/login")
@@ -38,7 +43,17 @@ public class AuthController extends BaseController {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         var res = new ResLoginDTO();
+
+        User currentUserDB = userService.handleFindUserByUserName(loginDTO.getUsername());
+        if (currentUserDB != null) {
+            var userLogin = new ResLoginDTO.UserLogin(
+                    currentUserDB.getId(),
+                    currentUserDB.getEmail(),
+                    currentUserDB.getName());
+            res.setUser(userLogin);
+        }
         res.setAccessToken(accessToken);
+
         return ResponseEntity.ok().body(res);
     }
 }

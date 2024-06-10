@@ -6,14 +6,14 @@ import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.http.server.ServletServerHttpResponse;
 import org.springframework.lang.Nullable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
 import jakarta.servlet.http.HttpServletResponse;
-import vn.hoidanit.jobhunter.domain.RestResponse;
-import vn.hoidanit.jobhunter.util.error.anotation.ApiMessage;
+import vn.hoidanit.jobhunter.domain.dto.RestResponse;
+import vn.hoidanit.jobhunter.util.anotation.ApiMessage;
 
-@RestController
+@RestControllerAdvice
 public class FormatRestResponse implements ResponseBodyAdvice<Object> {
 
     @Override

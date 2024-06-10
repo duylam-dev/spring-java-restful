@@ -16,9 +16,12 @@ import com.turkraft.springfilter.boot.Filter;
 
 import vn.hoidanit.jobhunter.domain.User;
 import vn.hoidanit.jobhunter.domain.dto.ResPaginationDTO;
+import vn.hoidanit.jobhunter.domain.dto.ResUpdateUserDTO;
+import vn.hoidanit.jobhunter.domain.dto.ResUserDTO;
+import vn.hoidanit.jobhunter.domain.dto.ResCreateUserDTO;
 import vn.hoidanit.jobhunter.service.UserService;
+import vn.hoidanit.jobhunter.util.anotation.ApiMessage;
 import vn.hoidanit.jobhunter.util.error.IdInvalidException;
-import vn.hoidanit.jobhunter.util.error.anotation.ApiMessage;
 
 import org.springframework.web.bind.annotation.PutMapping;
 
@@ -33,7 +36,7 @@ public class UserController extends BaseController {
 
     @PostMapping("/users")
     @ApiMessage("create user")
-    public ResponseEntity<User> createNewUser(@RequestBody User postManUser) {
+    public ResponseEntity<ResCreateUserDTO> createNewUser(@RequestBody User postManUser) throws IdInvalidException {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(userService.handleCreate(postManUser));
 
@@ -42,16 +45,13 @@ public class UserController extends BaseController {
     @DeleteMapping("/users/{id}")
     @ApiMessage("delete user")
     public ResponseEntity<Void> deleteUser(@PathVariable("id") long id) throws IdInvalidException {
-        if (id >= 1500) {
-            throw new IdInvalidException("id must be < 1500");
-        }
         userService.handleDelete(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(null);
     }
 
     @GetMapping("/users/{id}")
     @ApiMessage("find user by id")
-    public ResponseEntity<User> findUserById(@PathVariable("id") long id) {
+    public ResponseEntity<ResUserDTO> findUserById(@PathVariable("id") long id) throws IdInvalidException {
         return ResponseEntity.ok(userService.handleFindUserById(id));
     }
 
@@ -65,7 +65,7 @@ public class UserController extends BaseController {
 
     @PutMapping("/users")
     @ApiMessage("update user")
-    public ResponseEntity<User> updateUser(@RequestBody User user) {
+    public ResponseEntity<ResUpdateUserDTO> updateUser(@RequestBody User user) throws IdInvalidException {
         return ResponseEntity.ok(userService.handleUpdate(user));
     }
 }

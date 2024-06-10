@@ -1,4 +1,4 @@
-package vn.hoidanit.jobhunter.util.error.anotation;
+package vn.hoidanit.jobhunter.util.anotation;
 
 import java.lang.annotation.*;
 

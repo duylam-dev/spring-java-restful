@@ -9,6 +9,7 @@ import vn.hoidanit.jobhunter.domain.Company;
 
 import vn.hoidanit.jobhunter.domain.dto.ResPaginationDTO;
 import vn.hoidanit.jobhunter.service.CompanyService;
+import vn.hoidanit.jobhunter.util.anotation.ApiMessage;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -30,11 +31,13 @@ public class CompanyController extends BaseController {
     }
 
     @PostMapping("/companies")
+    @ApiMessage("create company")
     public ResponseEntity<Company> createCompany(@Valid @RequestBody Company company) {
         return ResponseEntity.status(HttpStatus.CREATED).body(companyService.handleCreate(company));
     }
 
     @GetMapping("/companies")
+    @ApiMessage("find all company")
     public ResponseEntity<ResPaginationDTO> findAllCompany(
             @Filter Specification<Company> spec, Pageable pageable) {
 
@@ -42,11 +45,13 @@ public class CompanyController extends BaseController {
     }
 
     @PutMapping("/companies")
+    @ApiMessage("update company")
     public ResponseEntity<Company> updateCompany(@RequestBody Company company) {
         return ResponseEntity.ok(companyService.handleUpdate(company));
     }
 
     @DeleteMapping("/companies/{id}")
+    @ApiMessage("delete company")
     public ResponseEntity<Void> deleteCompany(@PathVariable(name = "id") long id) {
         companyService.handleDelete(id);
         return ResponseEntity.ok(null);

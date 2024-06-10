@@ -32,6 +32,8 @@ import vn.hoidanit.jobhunter.util.SecurityUtil;
 @EnableMethodSecurity(securedEnabled = true)
 public class SecurityConfiguration {
 
+    private final String[] PUBLIC_ENDPOINT = { "/", "/api/v1/login" };
+
     @Value("${hoidanit.jwt.base64-secret}")
     private String jwtKey;
 
@@ -56,7 +58,7 @@ public class SecurityConfiguration {
         http.csrf(c -> c.disable())
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/login").permitAll()
+                        .requestMatchers(PUBLIC_ENDPOINT).permitAll()
                         .anyRequest().authenticated())
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(Customizer.withDefaults())
                         .authenticationEntryPoint(customAuthenticationEntryPoint))

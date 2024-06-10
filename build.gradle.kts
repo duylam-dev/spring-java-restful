@@ -25,10 +25,13 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("org.thymeleaf.extras:thymeleaf-extras-springsecurity6")
 	implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
+	implementation("org.mapstruct:mapstruct:1.5.5.Final")
+	annotationProcessor ("org.mapstruct:mapstruct-processor:1.5.5.Final")
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
 	runtimeOnly("com.mysql:mysql-connector-j")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.springframework.security:spring-security-test")
+	compileOnly("org.projectlombok:lombok:1.18.32")
 }
 
 tasks.withType<Test> {
