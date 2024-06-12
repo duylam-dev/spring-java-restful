@@ -9,6 +9,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import lombok.RequiredArgsConstructor;
 import vn.hoidanit.jobhunter.domain.User;
 import vn.hoidanit.jobhunter.domain.dto.ResPaginationDTO;
 import vn.hoidanit.jobhunter.domain.dto.ResUpdateUserDTO;
@@ -19,16 +20,11 @@ import vn.hoidanit.jobhunter.util.Mapper.UserMapper;
 import vn.hoidanit.jobhunter.util.error.IdInvalidException;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder encoder;
     private final UserMapper userMapper;
-
-    public UserService(UserRepository userRepository, PasswordEncoder encoder, UserMapper userMapper) {
-        this.userRepository = userRepository;
-        this.encoder = encoder;
-        this.userMapper = userMapper;
-    }
 
     public ResCreateUserDTO handleCreate(User user) throws IdInvalidException {
         if (userRepository.existsByEmail(user.getEmail()))
@@ -78,5 +74,18 @@ public class UserService {
         var res = new ResUpdateUserDTO();
         userMapper.updateUser(res, userRepository.save(user));
         return res;
+    }
+
+    public void updateRefreshToken(String email, String token) {
+        var currentUser = handleFindUserByUserName(email);
+        if (currentUser != null) {
+            currentUser.setRefreshToken(token);
+            userRepository.save(currentUser);
+        }
+
+    }
+
+    public User getUserByRefreshTokenAndEmail(String token, String email) {
+        return userRepository.findByRefreshTokenAndEmail(token, email);
     }
 }
