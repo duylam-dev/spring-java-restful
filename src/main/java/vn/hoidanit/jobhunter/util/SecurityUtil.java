@@ -56,10 +56,6 @@ public class SecurityUtil {
         var userLogin = setInfoUserResponse(email);
         // create new access token
         String accessToken = generateToken(email, userLogin, false);
-
-        // create new refresh token
-        String refresh_token = generateToken(email, userLogin, true);
-        userService.updateRefreshToken(email, refresh_token);
         return new ResLoginDTO(accessToken, userLogin.getUser());
     }
 
