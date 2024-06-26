@@ -1,21 +1,27 @@
 package vn.hoidanit.jobhunter.service;
 
+import java.util.ArrayList;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import lombok.RequiredArgsConstructor;
 import vn.hoidanit.jobhunter.domain.Company;
+import vn.hoidanit.jobhunter.domain.response.ResCompanyDTO;
 import vn.hoidanit.jobhunter.domain.response.ResPaginationDTO;
 import vn.hoidanit.jobhunter.repository.CompanyRepository;
+import vn.hoidanit.jobhunter.repository.UserRepository;
+import vn.hoidanit.jobhunter.util.Mapper.CompanyMapper;
+import vn.hoidanit.jobhunter.util.error.IdInvalidException;
 
 @Service
+@RequiredArgsConstructor
 public class CompanyService {
-    private CompanyRepository companyRepository;
-
-    public CompanyService(CompanyRepository companyRepository) {
-        this.companyRepository = companyRepository;
-    }
+    private final CompanyRepository companyRepository;
+    private final UserRepository userRepository;
+    private final CompanyMapper companyMapper;
 
     public Company handleCreate(Company company) {
         return companyRepository.save(company);
@@ -46,7 +52,9 @@ public class CompanyService {
         return null;
     }
 
-    public void handleDelete(long id) {
+    public void handleDelete(long id) throws IdInvalidException {
+        var company = companyRepository.findById(id).orElseThrow(() -> new IdInvalidException("company is not exist"));
+        userRepository.deleteAll(company.getUsers());
         companyRepository.deleteById(id);
     }
 

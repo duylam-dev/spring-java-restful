@@ -15,6 +15,7 @@ import vn.hoidanit.jobhunter.domain.response.ResCreateUserDTO;
 import vn.hoidanit.jobhunter.domain.response.ResPaginationDTO;
 import vn.hoidanit.jobhunter.domain.response.ResUpdateUserDTO;
 import vn.hoidanit.jobhunter.domain.response.ResUserDTO;
+import vn.hoidanit.jobhunter.repository.CompanyRepository;
 import vn.hoidanit.jobhunter.repository.UserRepository;
 import vn.hoidanit.jobhunter.util.Mapper.UserMapper;
 import vn.hoidanit.jobhunter.util.error.IdInvalidException;
@@ -25,13 +26,19 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder encoder;
     private final UserMapper userMapper;
+    private final CompanyRepository companyRepository;
 
     public ResCreateUserDTO handleCreate(User user) throws IdInvalidException {
         if (userRepository.existsByEmail(user.getEmail()))
             throw new IdInvalidException("email: " + user.getEmail() + "existed, please use other email!");
 
         user.setPassword(encoder.encode(user.getPassword()));
-
+        var company = user.getCompany();
+        if (company != null) {
+            company = companyRepository.findById(user.getCompany().getId()).orElseThrow(
+                    () -> new IdInvalidException("company not exist"));
+        }
+        user.setCompany(company);
         return userMapper.toCreateDTO(userRepository.save(user));
     }
 
@@ -71,6 +78,10 @@ public class UserService {
         userRepository.findById(user.getId()).orElseThrow(() -> new IdInvalidException("user not exist"));
         if (user.getPassword() != null)
             user.setPassword(encoder.encode(user.getPassword()));
+
+        var company = companyRepository.findById(user.getCompany().getId()).orElseThrow(
+                () -> new IdInvalidException("company not exist"));
+        user.setCompany(company);
         var res = new ResUpdateUserDTO();
         userMapper.updateUser(res, userRepository.save(user));
         return res;

@@ -9,6 +9,7 @@ import vn.hoidanit.jobhunter.domain.Company;
 import vn.hoidanit.jobhunter.domain.response.ResPaginationDTO;
 import vn.hoidanit.jobhunter.service.CompanyService;
 import vn.hoidanit.jobhunter.util.anotation.ApiMessage;
+import vn.hoidanit.jobhunter.util.error.IdInvalidException;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -51,7 +52,7 @@ public class CompanyController extends BaseController {
 
     @DeleteMapping("/companies/{id}")
     @ApiMessage("delete company")
-    public ResponseEntity<Void> deleteCompany(@PathVariable(name = "id") long id) {
+    public ResponseEntity<Void> deleteCompany(@PathVariable(name = "id") long id) throws IdInvalidException {
         companyService.handleDelete(id);
         return ResponseEntity.ok(null);
     }

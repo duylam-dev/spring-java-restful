@@ -25,4 +25,5 @@ public class ResUserDTO {
     private Instant createdAt;
     // @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss a", timezone = "GMT+7")
     private Instant updatedAt;
+    private ResCompanyUserDTO company;
 }
