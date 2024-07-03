@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
-import vn.hoidanit.jobhunter.domain.RestResponse;
+import vn.hoidanit.jobhunter.domain.response.RestResponse;
 
 @RestControllerAdvice
 public class GlobalException {
@@ -62,6 +62,19 @@ public class GlobalException {
         }
 
         rs.setMessage(errors.size() > 1 ? errors : errors.get(0));
+        return ResponseEntity.badRequest().body(rs);
+    }
+
+    @ExceptionHandler(value = {
+            StorageException.class
+    })
+    public ResponseEntity<RestResponse<Object>> handleFileUploadException(Exception ex) {
+
+        var rs = new RestResponse<>();
+        rs.setStatusCode(HttpStatus.BAD_REQUEST.value());
+        rs.setError(ex.getMessage());
+        rs.setMessage("Exception upload file...");
+
         return ResponseEntity.badRequest().body(rs);
     }
 

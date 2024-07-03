@@ -7,6 +7,7 @@ import com.turkraft.springfilter.boot.Filter;
 import jakarta.validation.Valid;
 import vn.hoidanit.jobhunter.domain.Company;
 import vn.hoidanit.jobhunter.domain.response.ResPaginationDTO;
+import vn.hoidanit.jobhunter.domain.response.company.ResCompanyDTO;
 import vn.hoidanit.jobhunter.service.CompanyService;
 import vn.hoidanit.jobhunter.util.anotation.ApiMessage;
 import vn.hoidanit.jobhunter.util.error.IdInvalidException;
@@ -48,6 +49,12 @@ public class CompanyController extends BaseController {
     @ApiMessage("update company")
     public ResponseEntity<Company> updateCompany(@RequestBody Company company) {
         return ResponseEntity.ok(companyService.handleUpdate(company));
+    }
+
+    @GetMapping("/companies/{id}")
+    @ApiMessage("fetch company by id")
+    public ResponseEntity<ResCompanyDTO> findById(@PathVariable(name = "id") long id) throws IdInvalidException {
+        return ResponseEntity.ok(companyService.fetchById(id));
     }
 
     @DeleteMapping("/companies/{id}")

@@ -29,7 +29,11 @@ import vn.hoidanit.jobhunter.util.SecurityUtil;
 @EnableMethodSecurity(securedEnabled = true)
 public class SecurityConfiguration {
 
-    private final String[] PUBLIC_ENDPOINT = { "/", "/api/v1/auth/login", "/api/v1/auth/refresh" };
+    private final String[] PUBLIC_ENDPOINT = {
+            "/", "/api/v1/auth/login", "/api/v1/auth/refresh",
+            "/api/v1/companies/**", "/api/v1/jobs/**", "/storage/**"
+
+    };
 
     @Value("${hoidanit.jwt.base64-secret}")
     private String jwtKey;

@@ -5,6 +5,8 @@ import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.util.Pair;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -59,7 +61,7 @@ public class SecurityUtil {
         return new ResLoginDTO(accessToken, userLogin.getUser());
     }
 
-    public ResLoginDTO authentication(ReqLoginDTO loginDTO) {
+    public Pair<ResLoginDTO, ResponseCookie> authentication(ReqLoginDTO loginDTO) {
         // Nạp input gồm username/password vào Security
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                 loginDTO.getUsername(), loginDTO.getPassword());
@@ -78,7 +80,16 @@ public class SecurityUtil {
         String refresh_token = generateToken(loginDTO.getUsername(), userLogin, true);
         // save to database
         userService.updateRefreshToken(loginDTO.getUsername(), refresh_token);
-        return res;
+        // set cookie
+        ResponseCookie cookie = ResponseCookie
+                .from("refresh_token", refresh_token)
+                .httpOnly(true)
+                .secure(true)
+                .path("/")
+                .maxAge(refreshTokenExpiration)
+                .build();
+
+        return Pair.of(res, cookie);
     }
 
     public ResLoginDTO.UserGetAccount getAccount() {
@@ -86,11 +97,18 @@ public class SecurityUtil {
         return setInfoUserResponse(email);
     }
 
-    public void logout() throws IdInvalidException {
+    public ResponseCookie logout() throws IdInvalidException {
         String email = getCurrentUserLogin().isPresent() ? getCurrentUserLogin().get() : "";
         if (email.equals(""))
             throw new IdInvalidException("access token khong hop le");
         userService.updateRefreshToken(email, null);
+        return ResponseCookie
+                .from("refresh_token", null)
+                .httpOnly(true)
+                .secure(true)
+                .path("/")
+                .maxAge(0)
+                .build();
 
     }
 

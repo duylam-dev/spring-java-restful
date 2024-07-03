@@ -1,6 +1,7 @@
 package vn.hoidanit.jobhunter.util;
 
 import org.springframework.core.MethodParameter;
+import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
@@ -10,7 +11,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
 import jakarta.servlet.http.HttpServletResponse;
-import vn.hoidanit.jobhunter.domain.RestResponse;
+import vn.hoidanit.jobhunter.domain.response.RestResponse;
 import vn.hoidanit.jobhunter.util.anotation.ApiMessage;
 
 @RestControllerAdvice
@@ -31,7 +32,7 @@ public class FormatRestResponse implements ResponseBodyAdvice<Object> {
 
         var rs = new RestResponse<>();
         rs.setStatusCode(status);
-        if (status >= 400 || body instanceof String) {
+        if (status >= 400 || body instanceof String || body instanceof Resource) {
             return body;
         } else {
             rs.setData(body);

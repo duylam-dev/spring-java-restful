@@ -9,8 +9,8 @@ import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
 import vn.hoidanit.jobhunter.domain.Company;
-import vn.hoidanit.jobhunter.domain.response.ResCompanyDTO;
 import vn.hoidanit.jobhunter.domain.response.ResPaginationDTO;
+import vn.hoidanit.jobhunter.domain.response.company.ResCompanyDTO;
 import vn.hoidanit.jobhunter.repository.CompanyRepository;
 import vn.hoidanit.jobhunter.repository.UserRepository;
 import vn.hoidanit.jobhunter.util.Mapper.CompanyMapper;
@@ -56,6 +56,12 @@ public class CompanyService {
         var company = companyRepository.findById(id).orElseThrow(() -> new IdInvalidException("company is not exist"));
         userRepository.deleteAll(company.getUsers());
         companyRepository.deleteById(id);
+    }
+
+    public ResCompanyDTO fetchById(long id) throws IdInvalidException {
+        var companyDb = companyRepository.findById(id)
+                .orElseThrow(() -> new IdInvalidException("company is not exist"));
+        return companyMapper.toResCompanyDTO(companyDb);
     }
 
 }

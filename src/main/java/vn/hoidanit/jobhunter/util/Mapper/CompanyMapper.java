@@ -3,7 +3,7 @@ package vn.hoidanit.jobhunter.util.Mapper;
 import org.mapstruct.Mapper;
 
 import vn.hoidanit.jobhunter.domain.Company;
-import vn.hoidanit.jobhunter.domain.response.ResCompanyDTO;
+import vn.hoidanit.jobhunter.domain.response.company.ResCompanyDTO;
 
 @Mapper(componentModel = "spring")
 public interface CompanyMapper {

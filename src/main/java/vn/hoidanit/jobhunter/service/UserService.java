@@ -11,10 +11,10 @@ import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
 import vn.hoidanit.jobhunter.domain.User;
-import vn.hoidanit.jobhunter.domain.response.ResCreateUserDTO;
 import vn.hoidanit.jobhunter.domain.response.ResPaginationDTO;
-import vn.hoidanit.jobhunter.domain.response.ResUpdateUserDTO;
-import vn.hoidanit.jobhunter.domain.response.ResUserDTO;
+import vn.hoidanit.jobhunter.domain.response.user.ResCreateUserDTO;
+import vn.hoidanit.jobhunter.domain.response.user.ResUpdateUserDTO;
+import vn.hoidanit.jobhunter.domain.response.user.ResUserDTO;
 import vn.hoidanit.jobhunter.repository.CompanyRepository;
 import vn.hoidanit.jobhunter.repository.UserRepository;
 import vn.hoidanit.jobhunter.util.Mapper.UserMapper;
@@ -30,7 +30,7 @@ public class UserService {
 
     public ResCreateUserDTO handleCreate(User user) throws IdInvalidException {
         if (userRepository.existsByEmail(user.getEmail()))
-            throw new IdInvalidException("email: " + user.getEmail() + "existed, please use other email!");
+            throw new IdInvalidException("email: " + user.getEmail() + " existed, please use other email!");
 
         user.setPassword(encoder.encode(user.getPassword()));
         var company = user.getCompany();
@@ -54,7 +54,7 @@ public class UserService {
     }
 
     public User handleFindUserByUserName(String username) {
-        return userRepository.findByEmail(username);
+        return userRepository.findByEmail(username).orElseGet(null);
     }
 
     public ResPaginationDTO handleFindAllUser(Specification<User> spec, Pageable pageable) {
@@ -75,16 +75,23 @@ public class UserService {
     }
 
     public ResUpdateUserDTO handleUpdate(User user) throws IdInvalidException {
-        userRepository.findById(user.getId()).orElseThrow(() -> new IdInvalidException("user not exist"));
+        var userDB = userRepository.findById(user.getId()).orElseThrow(() -> new IdInvalidException("user not found"));
+        if (userDB.getEmail() != user.getEmail()) {
+            if (userRepository.existsByEmail(user.getEmail()))
+                throw new IdInvalidException("email existed!");
+        }
         if (user.getPassword() != null)
             user.setPassword(encoder.encode(user.getPassword()));
 
-        var company = companyRepository.findById(user.getCompany().getId()).orElseThrow(
-                () -> new IdInvalidException("company not exist"));
+        var company = user.getCompany();
+        if (company != null) {
+            company = companyRepository.findById(user.getCompany().getId()).orElseThrow(
+                    () -> new IdInvalidException("company not exist"));
+        }
         user.setCompany(company);
-        var res = new ResUpdateUserDTO();
-        userMapper.updateUser(res, userRepository.save(user));
-        return res;
+        userMapper.updateUser(userDB, user);
+
+        return userMapper.toUpdateDTO(userRepository.save(userDB));
     }
 
     public void updateRefreshToken(String email, String token) {
