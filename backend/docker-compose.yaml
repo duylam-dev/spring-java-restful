@@ -1,0 +1,20 @@
+version: '3.9'
+services:
+  database-mysql:
+    image: mysql:8.0
+    restart: always
+    environment:
+      - MYSQL_DATABASE=jobhunter
+      - MYSQL_ROOT_PASSWORD=123456
+    ports:
+      - '3307:3306'
+    expose:
+      - 3306
+  # backend:
+  #   build:
+  #     dockerfile: Dockerfile
+  #   environment:
+  #     - DB_HOST=database-mysql
+  #     - DB_PORT=3306
+  #   depends_on:
+  #     - database-mysql
