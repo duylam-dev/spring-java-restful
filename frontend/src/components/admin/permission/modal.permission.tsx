@@ -3,6 +3,8 @@ import { Col, Form, Row, message, notification } from "antd";
 import { isMobile } from 'react-device-detect';
 import { callCreatePermission, callUpdatePermission } from "@/config/api";
 import { IPermission } from "@/types/backend";
+import { ALL_MODULES } from "@/config/permissions";
+import { useEffect } from "react";
 
 interface IProps {
     openModal: boolean;
@@ -17,6 +19,12 @@ interface IProps {
 const ModalPermission = (props: IProps) => {
     const { openModal, setOpenModal, reloadTable, dataInit, setDataInit } = props;
     const [form] = Form.useForm();
+
+    useEffect(() => {
+        if (dataInit?.id) {
+            form.setFieldsValue(dataInit)
+        }
+    }, [dataInit])
 
 
     const submitPermission = async (valuesForm: any) => {
@@ -127,16 +135,7 @@ const ModalPermission = (props: IProps) => {
                         <ProFormSelect
                             name="module"
                             label="Thuộc Module"
-                            valueEnum={{
-                                COMPANIES: 'COMPANIES',
-                                FILES: 'FILES',
-                                JOBS: 'JOBS',
-                                PERMISSIONS: 'PERMISSIONS',
-                                RESUMES: 'RESUMES',
-                                ROLES: 'ROLES',
-                                USERS: 'USERS',
-                                SUBSCRIBERS: 'SUBSCRIBERS'
-                            }}
+                            valueEnum={ALL_MODULES}
                             placeholder="Please select a module"
                             rules={[{ required: true, message: 'Vui lòng chọn module!' }]}
                         />
